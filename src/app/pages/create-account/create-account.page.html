@@ -1,0 +1,172 @@
+<!-- <ion-content>
+
+<form [formGroup]="formObj">
+
+  <div class="container" style="display: flex;">
+    <ion-card>
+      <ion-item>
+        <ion-label position="floating">Name</ion-label>
+        <ion-input formControlName="name"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Email</ion-label>
+        <ion-input formControlName="email"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Password</ion-label>
+        <ion-input formControlName="password"></ion-input>
+      </ion-item>
+      <ion-button (click)="createAccount()">Submit</ion-button>
+    </ion-card>
+  </div>
+
+
+
+
+</form>
+</ion-content> -->
+
+
+<ion-content>
+  <!-- Form Container  -------------------------------------------------------------------------------------------------------------------------------->
+  <form class="formContainer" [formGroup]="formObj">
+
+    <ion-grid>
+      <!---- Full Page Holder Row *Used to center ALL PAGE CONTENT vertically + horizontally ----------------------------------------------------->
+      <ion-row class="fullViewHeight">
+        <ion-col class="ion-align-self-center ion-justify-content-center" size-sm="6" offset-sm="3" size-md="10"
+          offset-md="1" size-lg="5" offset-lg="3.5">
+
+          <!-- Card Container* ---------------------------------------------------------------------------------------------->
+          <ion-card class="cardBackground shadowStyle">
+            <ion-card-content>
+              <!-- Logo Image Holder -------------------------->
+              <ion-card-title>
+                <ion-img class="logoImg  animate__animated animate__flipInY" src='assets/img/dog-background.png'>
+                </ion-img>
+              </ion-card-title>
+              <!-- Practice code for conditional rendering varibles -------------------------->
+              <div *ngIf="flag">
+                Name: {{example}}
+                <br>
+                Password:{{formObj.value.password}}
+                <ion-button (click)="onShow()">Toggle</ion-button>
+              </div>
+              <!-- -------------------------------------------------------------------------------- -->
+              <ion-grid>
+                <!-- Full Name Input Row ---------------------------------------------------------------------------------->
+                <ion-row class="authInputRowPadding ion-justify-content-center">
+                  <ion-col size="12">
+                    <ion-item>
+                      <ion-label position="floating">Name</ion-label>
+                      <ion-input formControlName="name"></ion-input>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+
+                <!-- Date Of Birth Input Row ------------------------------------------------------------------------------------->
+                <!-- <ion-row class="authInputRowPadding ion-justify-content-center">
+                  <ion-col size="12">
+                    <cstm-date-picker style="cursor: pointer; "
+                      [errorCondition]="formObj.get('dateOfBirth').invalid && formObj.get('dateOfBirth').touched"
+                      [errorMsg]="errorMsgs.dateOfBirth" placeholder="Date Of Birth" controlName="dateOfBirth">
+                    </cstm-date-picker>
+                  </ion-col>
+                </ion-row> -->
+
+                <!-- Email Input Row -------------------------------------------------------------------------------->
+                <ion-row class="authInputRowPadding ion-justify-content-center">
+                  <ion-col size="12">
+                    <ion-item>
+                      <ion-label position="floating">Email</ion-label>
+                      <ion-input formControlName="email"></ion-input>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+
+                <!-- Phone Input Row -------------------------------------------------------------------------------->
+                <!-- <ion-row class="authInputRowPadding ion-justify-content-center">
+                  <ion-col size="12">
+                    <cstm-input-item type="phone" controlName="phone" inputMask="+0 (000) 000-0000"
+                      placeholder="Phone Number"
+                      [errorCondition]="formObj.get('phone').invalid && formObj.get('phone').touched"
+                      [errorMsg]="errorMsgs.phone">
+                    </cstm-input-item>
+                  </ion-col>
+                </ion-row> -->
+
+                <!-- Password Input Row ----------------------------------------------------------------------------------->
+                <ion-row class="authInputRowPadding ion-justify-content-center">
+                  <ion-col size="12">
+                    <ion-item>
+                      <ion-label position="floating">Password</ion-label>
+                      <ion-input formControlName="password"></ion-input>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+
+                <!-- Password Confirm Input Row ----------------------------------------------------------------------------->
+                <!-- <ion-row class=" ion-justify-content-center">
+                  <ion-col size="12">
+                    <cstm-input-item
+                      [errorCondition]="formObj.get('passwordConfirm').touched && formObj.hasError('notSame')"
+                      [errorMsg]="errorMsgs.passwordConfirm" placeholder="Confirm Password" type="password"
+                      controlName="passwordConfirm">
+                    </cstm-input-item>
+                  </ion-col>
+                </ion-row> -->
+
+                <!-- Agreed To Terms CheckBox Row ---------------------------------------------------->
+                <ion-row class=" ion-justify-content-start">
+                  <ion-item class="transparentItem agreeToTermsCheckBoxItem noStartPadding" lines="none">
+                    <ion-checkbox formControlName="agreedToTerms" class="ion-align-self-start"></ion-checkbox>
+                    <ion-text style="text-transform: capitalize; font-size: 12px; font-weight: 400;" class="fontBtn">
+                      &nbsp; I agree to DogsWalk
+                      <a (click)="openTerms()" style="color: blue !important;   cursor: pointer;">terms and conditions
+                      </a>
+                    </ion-text>
+                  </ion-item>
+                </ion-row>
+
+                <!-- Next Button Row --------------------------------------------------------------------->
+                <ion-row class=" ion-justify-content-center">
+
+                  <ion-button shape="round" class=" ion-activatable ripple-parent signInBtn"
+                    [disabled]="formObj.invalid" (click)="createAccount()" expand="block"
+                    fill="solid" color="primary">
+                    <ion-ripple-effect></ion-ripple-effect>
+                    <ion-text style="text-transform: capitalize; font-size: 15px;   font-weight: 900;" class="fontBtn">
+                      Create Account
+                    </ion-text>
+                  </ion-button>
+                  <!-- <ion-button>
+                    <p *ngIf="formObj.valid">
+                      Valid
+                    </p>
+                    <p *ngIf="formObj.invalid">
+                      In Valid
+                    </p>
+                  </ion-button> -->
+                </ion-row>
+
+                <!-- Already Have An Account Button Row --------------------------------------------->
+                <ion-row class=" ion-justify-content-center">
+                  <ion-button (click)="goBack()" expand="block" fill="clear" color="medium">
+                    <ion-ripple-effect></ion-ripple-effect>
+                    <ion-text color="dark" style="text-transform: capitalize; font-size: 12px; font-weight: 400;"
+                      class="fontBtn">
+                      Already Have an account?
+                    </ion-text>
+                  </ion-button>
+                </ion-row>
+
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
+
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+  </form>
+</ion-content>

@@ -1,0 +1,67 @@
+.container {
+  text-align: center;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+}
+
+ion-content {
+  --color: #fff;
+  --background: none;
+  background: url(/../../assets/img/download.jpg) no-repeat 0 0;
+  background-size: cover;
+}
+
+
+.fullViewHeight {
+  height: 90vh;
+}
+
+ion-checkbox .item-cover {
+  display: none;
+}
+
+ion-checkbox {
+  position: relative;
+}
+
+ion-item ion-input {
+  cursor: pointer !important;
+}
+
+ion-item ion-input:hover {
+  cursor: pointer !important;
+}
+
+.signInBtn {
+  --opacity: inherit;
+}
+
+.logoImg {
+  height: 65%;
+  margin: auto;
+  display: block;
+}
+
+
+
+
+.agreeToTermsCheckBoxItem.ion-activatable {
+  --padding-start: 10px; //Left padding if direction is left-to-right,and right padding if direction is right-to-left of the item
+  --background-hover: transparent; // Background of the button on hover
+
+  ion-text {
+    position: relative;
+    z-index: 10;
+  }
+}
+
+.cardBackground {
+  --background: whitesmoke;
+  border-radius: 25px;
+
+}
