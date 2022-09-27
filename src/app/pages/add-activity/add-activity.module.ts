@@ -5,18 +5,18 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { AddDogPageRoutingModule } from './add-dog-routing.module';
+import { AddActivityPageRoutingModule } from './add-activity-routing.module';
 
-import { AddDogPage } from './add-dog.page';
+import { AddActivityPage } from './add-activity.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    AddDogPageRoutingModule,
+    AddActivityPageRoutingModule,
     ReactiveFormsModule,
   ],
-  declarations: [AddDogPage],
+  declarations: [AddActivityPage],
 })
-export class AddDogPageModule {}
+export class AddActivityPageModule {}

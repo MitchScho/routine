@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title style="text-align: center;">ActivityDashboard</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="addActivity()" size="large">
+          <ion-icon slot="icon-only" name="add-circle"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+<ion-item *ngFor="let activity of activityList">
+  <ion-avatar>
+    <img alt="Silhouette of a person's head" [src]="activity.photoUrl" />
+  </ion-avatar>
+  <ion-label>{{activity.name}}</ion-label>
+
+</ion-item>
+<ion-card *ngIf="!activityList.length ">Add a New Activity</ion-card>
+</ion-content>

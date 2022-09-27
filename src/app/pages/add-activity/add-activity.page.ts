@@ -2,24 +2,24 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NavController } from '@ionic/angular';
 import { UiHelper } from 'src/app/helpers/ui.helper';
-import { DogService } from 'src/app/services/dog.service';
+import { ActivityService } from 'src/app/services/activity.service';
 import {AngularFireUploadTask, AngularFireStorage,} from '@angular/fire/compat/storage';
 import { FirebaseHelper } from 'src/app/helpers/firebase.helper';
 import { finalize, map } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-add-dog',
-  templateUrl: './add-dog.page.html',
-  styleUrls: ['./add-dog.page.scss'],
+  selector: 'app-add-activity',
+  templateUrl: './add-activity.page.html',
+  styleUrls: ['./add-activity.page.scss'],
 })
-export class AddDogPage implements OnInit {
+export class AddActivityPage implements OnInit {
   formObj: FormGroup;
   task: AngularFireUploadTask;
   photoUrl: String = null;
 
   constructor(
     private fb: FormBuilder,
-    private dogService: DogService,
+    private activityService: ActivityService,
     private navCtrl: NavController,
     private uiHelper: UiHelper,
     private storage: AngularFireStorage,
@@ -37,13 +37,13 @@ export class AddDogPage implements OnInit {
     });
   }
 
-  addDog() {
-    const dog = {
+  addActivity() {
+    const activity = {
       name: this.formObj.value.name,
       photoUrl: this.photoUrl
     };
-    this.dogService.addDog(dog).subscribe((res) => {
-      console.log('dog res', res);
+    this.activityService.addActivity(activity).subscribe((res) => {
+      console.log('activity res', res);
       this.navCtrl.pop();
     });
   }

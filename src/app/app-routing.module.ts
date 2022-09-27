@@ -21,15 +21,15 @@ const routes: Routes = [
   },
   {
     path: 'dog-dashboard',
-    loadChildren: () => import('./pages/dog-dashboard/dog-dashboard.module').then( m => m.DogDashboardPageModule)
+    loadChildren: () => import('./pages/activity-dashboard/activity-dashboard.module').then( m => m.DogDashboardPageModule)
   },
   {
     path: 'add-dog',
-    loadChildren: () => import('./pages/add-dog/add-dog.module').then( m => m.AddDogPageModule)
+    loadChildren: () => import('./pages/add-activity/add-activity.module').then( m => m.AddDogPageModule)
   },
   {
     path: 'update-dog',
-    loadChildren: () => import('./pages/update-dog/update-dog.module').then( m => m.UpdateDogPageModule)
+    loadChildren: () => import('./pages/update-activity/update-activity.module').then( m => m.UpdateDogPageModule)
   },
 ];
 

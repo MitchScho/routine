@@ -4,17 +4,17 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { UpdateDogPageRoutingModule } from './update-dog-routing.module';
+import { UpdateActivityPageRoutingModule } from './update-activity-routing.module';
 
-import { UpdateDogPage } from './update-dog.page';
+import { UpdateActivityPage } from './update-activity.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    UpdateDogPageRoutingModule
+    UpdateActivityPageRoutingModule
   ],
-  declarations: [UpdateDogPage]
+  declarations: [UpdateActivityPage]
 })
-export class UpdateDogPageModule {}
+export class UpdateActivityPageModule {}

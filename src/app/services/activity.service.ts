@@ -4,15 +4,17 @@
 //-- **Core** -----------------------------------------------------------------------------------//
 import { Injectable } from '@angular/core';
 import { from } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs/operators';
 //-- **Data Models** ----------------------------------------------------------------------------//
 import { EventDb } from '../models/event.model';
-import {
-  ActivityDb,
-  ActivityLastEventIdentifierFields,
-} from './../models/activity.model';
+import { ActivityDb, ActivityLastEventIdentifierFields } from './../models/activity.model';
 //-- **Firebase** -------------------------------------------------------------------------------//
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 
+//----------------- Helpers ----------------------------------//
+import { UiHelper } from '../helpers/ui.helper';
+import { FirebaseHelper } from '../helpers/firebase.helper';
 @Injectable({
   providedIn: 'root',
 })
@@ -21,11 +23,29 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
  **  API Service Calls                                                                           **
  **************************************************************************************************/
 export class ActivityService {
-  constructor(public fireStoreDB: AngularFirestore) {}
+  constructor(
+    public uiHelper: UiHelper,
+    public http: HttpClient,
+    public fireStoreDb: AngularFirestore,
+    public fireBaseHelper: FirebaseHelper
+  ) {}
 
   //-- Get All API Call ------------------------------------------->
+  // getAllActivities() {
+  //   return this.fireStoreDB.collection<ActivityDb>('activity').get();
+  // }
+
   getAllActivities() {
-    return this.fireStoreDB.collection<ActivityDb>('activity').get();
+    return this.fireStoreDb
+      .collection('activity')
+      .snapshotChanges()
+      .pipe(
+        map((res) => {
+          const enrichedActivityServerResponse =
+            this.fireBaseHelper.enrichFirebaseRes(res);
+          return enrichedActivityServerResponse;
+        })
+      );
   }
 
   //-- Get API Call --------------------------------------------------------------------------------------->
@@ -35,6 +55,21 @@ export class ActivityService {
         ref.where('id', '==', activityId)
       )
       .get();
+  }
+
+  //---- Add Activity ------------------------------------------------------------------------------->
+  addActivity(activity: any) {
+    const id = this.fireBaseHelper.generateFirebaseId();
+    const activityInsert = {
+      id: id,
+      ...activity,
+    };
+    return from(
+      this.fireStoreDb
+        .collection('activity')
+        .doc(activityInsert.id)
+        .set(activityInsert)
+    );
   }
 
   //-- Create API Call ---------------------------------------------------------------------------->
@@ -103,3 +138,5 @@ export class ActivityService {
     return from(batch.commit());
   }
 }
+
+
