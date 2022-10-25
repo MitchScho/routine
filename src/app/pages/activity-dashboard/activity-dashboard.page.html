@@ -11,7 +11,7 @@
 
 <ion-content>
 
-<ion-item *ngFor="let activity of activityList">
+<ion-item *ngFor="let activity of activityList" (click)="goToActivityDetailPage(activity)">
   <ion-avatar>
     <img alt="Silhouette of a person's head" [src]="activity.photoUrl" />
   </ion-avatar>

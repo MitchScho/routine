@@ -1,3 +1,110 @@
+/*************************************************************************************************
+ ** Imports                                                                                      **
+ **************************************************************************************************/
+//-- **Data Models** ----------------------------------------------------------------------------//
+import { EventDb } from '../models/event.model';
+import { initialEventDb } from '../models/event.model';
+//------------------------------------------------------------------------------------------------>
+//--- ***IMPORTANT*** ---------------------------------------------------------------------------->
+//--- Update data version whenever data schema change occurs ------------------------------------->
+//------------------------------------------------------------------------------------------------>
+export const routineDataVersion = 0;
+export const routineDatabaseName = 'routine';
+export const routineEvents = {
+  create: '[Routine]-Create-Routine',
+  update: '[Routine]-Update-Routine',
+  delete: '[Routine]-Delete-Routine',
+};
+
+//-- LastEvent Identifier Fields ------------------>
+export interface RoutineLastEventIdentifierFields {
+  routineId?: string;
+  eventId?: string;
+  eventCorrelationId?: string;
+}
+
+//--- Routine Db Model -------------------------------------------------->
+export interface RoutineDb {
+  id?: string;
+  //--- Main Database Fields --------------------------------------------->
+  name: string;
+  description: string;
+  schedule: {
+    dayOfWeek: number; //Monday = 1, Sunday = 7
+    activityIds: string[]; //Activites for particular day
+    activitiesConfig: {
+      activityId: string;
+      startTime: any;
+      endTime: any;
+      reps: {
+        setNumber: number;
+        weightType: string; //See **repWeightType */  bodyWeight | dumbbellWeight
+        weight: number;
+        time: number;
+        distance: number;
+        repNumber: number;
+        extraInstructions: string;
+      }[];
+    }[];
+  }[];
+  
+  //---------------------------------------------------------------------->
+  _display?: any; //-- Local front end display(get deleted on server send)
+  lastEvent?: EventDb<RoutineLastEventIdentifierFields>;
+  createdBy?: {
+    id?: string;
+    name?: string;
+  };
+  createdAt?: {
+    week?: number;
+    month?: number;
+    year?: number;
+    quarter?: number;
+    day?: number;
+    timestamp?: any;
+  };
+}
+
+//--- List of fields to delete when calling server -------->
+export const routineFieldsToDeleteOnServerSend = ['_display'];
+
+export const initialRoutineLastEventIdentifierFields = {
+  routineId: null,
+  eventId: null,
+  eventCorrelationId: null,
+};
+
+export const initialRoutineLastEvent: EventDb<RoutineLastEventIdentifierFields> =
+{
+  ...initialEventDb,
+  ids: { ...initialRoutineLastEventIdentifierFields },
+  what: {
+    ...initialEventDb,
+    databaseName: routineDatabaseName,
+  },
+};
+
+export const initialRoutineDb = {
+  id: null,
+  //--- Main Database Fields --------------------------------------------->
+  name: null,
+  //----------------------------------------------------------------------->
+  _display: null, //-- Local front end display(get deleted on server send)
+  lastEvent: { ...initialRoutineLastEvent },
+  createdBy: {
+    id: null,
+    name: null,
+  },
+  createdAt: {
+    week: null,
+    month: null,
+    year: null,
+    quarter: null,
+    day: null,
+    timestamp: null,
+  },
+};
+
 // //**********************************************************************************************/
 // //****** Routine Routine/Database (routine.model.ts) *******************************************/
 // //**********************************************************************************************/
@@ -98,110 +205,3 @@
 //   repWeightType.bodyWeight,
 //   repWeightType.dumbbellWeight,
 // ];
-
-/*************************************************************************************************
- ** Imports                                                                                      **
- **************************************************************************************************/
-//-- **Data Models** ----------------------------------------------------------------------------//
-import { EventDb } from '../models/event.model';
-import { initialEventDb } from '../models/event.model';
-//------------------------------------------------------------------------------------------------>
-//--- ***IMPORTANT*** ---------------------------------------------------------------------------->
-//--- Update data version whenever data schema change occurs ------------------------------------->
-//------------------------------------------------------------------------------------------------>
-export const routineDataVersion = 0;
-export const routineDatabaseName = 'routine';
-export const routineEvents = {
-  create: '[Routine]-Create-Routine',
-  update: '[Routine]-Update-Routine',
-  delete: '[Routine]-Delete-Routine',
-};
-
-//-- LastEvent Identifier Fields ------------------>
-export interface RoutineLastEventIdentifierFields {
-  routineId?: string;
-  eventId?: string;
-  eventCorrelationId?: string;
-}
-
-//--- Routine Db Model -------------------------------------------------->
-export interface RoutineDb {
-  id?: string;
-  //--- Main Database Fields --------------------------------------------->
-  name: string;
-    description: string;
-    schedule: {
-      dayOfWeek: number; //Monday = 1, Sunday = 7
-      activityIds: string[]; //Activites for particular day
-      activitiesConfig: {
-        activityId: string;
-        startTime: any;
-        endTime: any;
-        reps: {
-          setNumber: number;
-          weightType: string; //See **repWeightType */  bodyWeight | dumbbellWeight
-          weight: number;
-          time: number;
-          distance: number;
-          repNumber: number;
-          extraInstructions: string;
-        }[];
-      }[];
-    }[];
-
-  //---------------------------------------------------------------------->
-  _display?: any; //-- Local front end display(get deleted on server send)
-  lastEvent?: EventDb<RoutineLastEventIdentifierFields>;
-  createdBy?: {
-    id?: string;
-    name?: string;
-  };
-  createdAt?: {
-    week?: number;
-    month?: number;
-    year?: number;
-    quarter?: number;
-    day?: number;
-    timestamp?: any;
-  };
-}
-
-//--- List of fields to delete when calling server -------->
-export const routineFieldsToDeleteOnServerSend = ['_display'];
-
-export const initialRoutineLastEventIdentifierFields = {
- routineId: null,
-  eventId: null,
-  eventCorrelationId: null,
-};
-
-export const initialRoutineLastEvent: EventDb<RoutineLastEventIdentifierFields> =
-  {
-    ...initialEventDb,
-    ids: { ...initialRoutineLastEventIdentifierFields },
-    what: {
-      ...initialEventDb,
-      databaseName: routineDatabaseName,
-    },
-  };
-
-export const initialRoutineDb = {
-  id: null,
-  //--- Main Database Fields --------------------------------------------->
-  name: null,
-  //----------------------------------------------------------------------->
-  _display: null, //-- Local front end display(get deleted on server send)
-  lastEvent: { ...initialRoutineLastEvent },
-  createdBy: {
-    id: null,
-    name: null,
-  },
-  createdAt: {
-    week: null,
-    month: null,
-    year: null,
-    quarter: null,
-    day: null,
-    timestamp: null,
-  },
-};

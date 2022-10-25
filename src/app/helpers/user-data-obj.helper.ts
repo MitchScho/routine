@@ -1,4 +1,4 @@
-       /*************************************************************************************************
+/*************************************************************************************************
  ** Imports                                                                                      **
  **************************************************************************************************/
 //-- **Core** -----------------------------------------------------------------------------------//
@@ -7,18 +7,18 @@ import { Injectable } from '@angular/core';
 import { FirebaseHelper } from '../helpers/firebase.helper';
 import * as dateHelper from '../helpers/date.helper';
 //-- **Data Models** ----------------------------------------------------------------------------//
-import { activityFieldsToDeleteOnServerSend } from './../models/activity.model';
-import { ActivityLastEventIdentifierFields } from './../models/activity.model';
+import { userFieldsToDeleteOnServerSend } from './../models/user.model';
+import { UserLastEventIdentifierFields } from './../models/user.model';
 import { eventOperationOptions } from '../models/event.model';
 import { environment } from '../../environments/environment';
-import { activityDatabaseName } from './../models/activity.model';
+import { userDatabaseName } from './../models/user.model';
 import { initialEventDb } from '../models/event.model';
-import { activityDataVersion } from './../models/activity.model';
-import { initialActivityDb } from './../models/activity.model';
-import { activityEvents } from './../models/activity.model';
+import { userDataVersion } from './../models/user.model';
+import { initialUserDb } from './../models/user.model';
+import { userEvents } from './../models/user.model';
 import { EventDb } from '../models/event.model';
 import { UserDb } from '../models/user.model';
-import { ActivityDb } from '../models/activity.model';
+
 
 @Injectable({
   providedIn: 'root',
@@ -27,30 +27,30 @@ import { ActivityDb } from '../models/activity.model';
 /*************************************************************************************************
  **  Enriches Data For Api Calls/Actions                                                         **
  **************************************************************************************************/
-export class ActivityDataObjHelper {
+export class UserDataObjHelper {
   constructor(private firebaseHelper: FirebaseHelper) {}
 
-  createActivity(activity: ActivityDb, user?: UserDb) {
-    let stateUpdates: { activityObj: ActivityDb } = {
-      activityObj: initialActivityDb,
+  createUser(user: UserDb) {
+    let stateUpdates: { userObj: UserDb } = {
+      userObj: initialUserDb,
     };
 
     //-- Identifier Fields --------------------------------------------------->
-    const activityId = activity?.id ?? this.firebaseHelper.generateFirebaseId();
+    const userId = user?.id ?? this.firebaseHelper.generateFirebaseId();
     const eventCorrelationId = this.firebaseHelper.generateFirebaseId();
     const eventId = this.firebaseHelper.generateFirebaseId();
 
-    //--- Activity Obj ------------------------->
-    const activityObj: ActivityDb = {
-      ...initialActivityDb,
-      ...activity,
-      id: activityId,
+    //--- User Obj ------------------------->
+    const userObj: UserDb = {
+      ...initialUserDb,
+      ...user,
+      id: userId,
       lastEvent: {
-        ...activity?.lastEvent,
+        ...user?.lastEvent,
         ids: {
-          ...initialActivityDb?.lastEvent?.ids,
-          ...activity?.lastEvent?.ids,
-          activityId,
+          ...initialUserDb?.lastEvent?.ids,
+          ...user?.lastEvent?.ids,
+          userId,
           eventId,
           eventCorrelationId,
           //add additional id's here
@@ -59,10 +59,10 @@ export class ActivityDataObjHelper {
     };
 
     //-- Generate LastEvent Object ---------------------------------------->
-    const lastEvent: EventDb<ActivityLastEventIdentifierFields> = {
+    const lastEvent: EventDb<UserLastEventIdentifierFields> = {
       ...initialEventDb,
       id: eventId,
-      ids: activityObj?.lastEvent?.ids,
+      ids: userObj?.lastEvent?.ids,
       context: null,
       who: {
         id: user?.id ?? environment.appName,
@@ -70,17 +70,17 @@ export class ActivityDataObjHelper {
       },
       what: {
         ...initialEventDb?.what,
-        event: activityEvents.create,
-        databaseName: activityDatabaseName,
+        event: userEvents.create,
+        databaseName: userDatabaseName,
         operation: eventOperationOptions.create,
-        dataVersion: activityDataVersion,
+        dataVersion: userDataVersion,
       },
       when: dateHelper.getTimeFromDateTimestamp(new Date()),
     };
 
-    //-- Activity Insert ----------------------------------------->
-    const activityInsert: ActivityDb = {
-      ...activityObj,
+    //-- User Insert ----------------------------------------->
+    const userInsert: UserDb = {
+      ...userObj,
       lastEvent,
       createdBy: {
         id: user?.id ?? environment.appName,
@@ -90,60 +90,58 @@ export class ActivityDataObjHelper {
     };
 
     //-- Delete Fields Before Sending To Server ------------------>
-    activityFieldsToDeleteOnServerSend.forEach((fieldToDelete) => {
+    userFieldsToDeleteOnServerSend.forEach((fieldToDelete) => {
       try {
-        delete activityInsert?.[fieldToDelete];
+        delete userInsert?.[fieldToDelete];
       } catch (error) {
         return;
       }
     });
 
     //-- Event Insert ---------------------------------------------->
-    const eventInsert: EventDb<ActivityLastEventIdentifierFields> = {
-      ...activityObj.lastEvent,
+    const eventInsert: EventDb<UserLastEventIdentifierFields> = {
+      ...userObj.lastEvent,
       what: {
-        ...activityObj.lastEvent.what,
-        obj: { ...activityInsert },
+        ...userObj.lastEvent.what,
+        obj: { ...userInsert },
       },
     };
 
     //-- State Updates ---------->
-    stateUpdates.activityObj = {
-      ...activityInsert,
+    stateUpdates.userObj = {
+      ...userInsert,
     };
 
     return {
       eventInsert,
-      activityInsert,
+      userInsert,
       stateUpdates,
     };
   }
 
-  //-- Update activity --------------------------------------------------------------//
-  updateActivity(
-    activity: ActivityDb,
-    originalActivityObj: ActivityDb,
-    oldActivityList: ActivityDb[],
-    user?: UserDb
+  //-- Update user --------------------------------------------------------------//
+  updateUser(
+    user: UserDb,
+    originalUserObj: UserDb
+
   ) {
-    let stateUpdates: { activityObj: ActivityDb, activityList: ActivityDb[] } = {
-      activityObj: initialActivityDb,
-      activityList: [],
+    let stateUpdates: { userObj: UserDb } = {
+      userObj: initialUserDb,
     };
 
     //-- Identifier Fields --------------------------------------------------->
     const eventId = this.firebaseHelper.generateFirebaseId();
     const eventCorrelationId = this.firebaseHelper.generateFirebaseId();
 
-    //--- Activity Obj -------------------------->
-    const activityObj: ActivityDb = {
-      ...initialActivityDb,
-      ...activity,
+    //--- User Obj -------------------------->
+    const userObj: UserDb = {
+      ...initialUserDb,
+      ...user,
       lastEvent: {
-        ...activity?.lastEvent,
+        ...user?.lastEvent,
         ids: {
-          ...initialActivityDb?.lastEvent?.ids,
-          ...originalActivityObj?.lastEvent?.ids,
+          ...initialUserDb?.lastEvent?.ids,
+          ...originalUserObj?.lastEvent?.ids,
           eventId,
           eventCorrelationId,
           //add additional id's here
@@ -152,10 +150,10 @@ export class ActivityDataObjHelper {
     };
 
     //-- Generate LastEvent Object -------------------------------->
-    const lastEvent: EventDb<ActivityLastEventIdentifierFields> = {
+    const lastEvent: EventDb<UserLastEventIdentifierFields> = {
       ...initialEventDb,
       id: eventId,
-      ids: activityObj?.lastEvent?.ids,
+      ids: userObj?.lastEvent?.ids,
       context: null,
       who: {
         id: user?.id ?? environment.appName,
@@ -163,79 +161,67 @@ export class ActivityDataObjHelper {
       },
       what: {
         ...initialEventDb?.what,
-        event: activityEvents.update,
-        databaseName: activityDatabaseName,
+        event: userEvents.update,
+        databaseName: userDatabaseName,
         operation: eventOperationOptions.update,
-        dataVersion: activityDataVersion,
+        dataVersion: userDataVersion,
       },
       when: dateHelper.getTimeFromDateTimestamp(new Date()),
     };
 
-    //-- Activity Update ------------->
-    const activityUpdate: ActivityDb = {
-      ...activityObj,
+    //-- User Update ------------->
+    const userUpdate: UserDb = {
+      ...userObj,
       lastEvent,
     };
 
     //-- Delete Fields Before Sending To Server ------------------>
-    activityFieldsToDeleteOnServerSend.forEach((fieldToDelete) => {
+    userFieldsToDeleteOnServerSend.forEach((fieldToDelete) => {
       try {
-        delete activityUpdate?.[fieldToDelete];
+        delete userUpdate?.[fieldToDelete];
       } catch (error) {
         return;
       }
     });
 
     //-- Event Insert ---------------------------------------------->
-    const eventInsert: EventDb<ActivityLastEventIdentifierFields> = {
-      ...activityObj.lastEvent,
+    const eventInsert: EventDb<UserLastEventIdentifierFields> = {
+      ...userObj.lastEvent,
       what: {
-        ...activityObj.lastEvent.what,
-        obj: { ...activityUpdate },
+        ...userObj.lastEvent.what,
+        obj: { ...userUpdate },
       },
     };
 
-    
-    const updatedActivityList = oldActivityList.map((item) => {
-      if (item.id == activityUpdate.id) {
-        return { ...activityUpdate };
-      } else {
-        return {...item}
-      }
-    })
-
     //-- State Updates ---------->
-    stateUpdates = {
-      ...stateUpdates,
-      activityObj: {...activityUpdate},
-      activityList: [...updatedActivityList]
-  
+    stateUpdates.userObj = {
+      ...userUpdate,
     };
 
     return {
       eventInsert,
-      activityUpdate,
+      userUpdate,
       stateUpdates,
     };
   }
 
-  //-- Delete activity --------------------------------------------------------//
-  deleteActivity(activity: ActivityDb, user?: UserDb) {
-    let stateUpdates: { activityObj: ActivityDb } = { activityObj: null };
+  //-- Delete user --------------------------------------------------------//
+  deleteUser( user?: UserDb) {
+    let stateUpdates: { userObj: UserDb } = { userObj: null };
 
     //-- Identifier Fields --------------------------------------------------->
     const eventId = this.firebaseHelper.generateFirebaseId();
     const eventCorrelationId = this.firebaseHelper.generateFirebaseId();
 
-    //--- Activity Obj -------------------------->
-    const activityObj: ActivityDb = {
-      ...initialActivityDb,
-      ...activity,
+    //--- User Obj -------------------------->
+    const userObj: UserDb = {
+      ...initialUserDb,
+      ...user,
       lastEvent: {
-        ...activity?.lastEvent,
+        ...user?.lastEvent,
         ids: {
-          ...initialActivityDb?.lastEvent?.ids,
-          ...activity?.lastEvent?.ids,
+          ...initialUserDb?.lastEvent?.ids,
+          ...user?.lastEvent?.ids,
           eventId,
           eventCorrelationId,
           //add additional id's here
@@ -244,10 +230,10 @@ export class ActivityDataObjHelper {
     };
 
     //-- Generate LastEvent Object -------------------------------->
-    const lastEvent: EventDb<ActivityLastEventIdentifierFields> = {
+    const lastEvent: EventDb<UserLastEventIdentifierFields> = {
       ...initialEventDb,
       id: eventId,
-      ids: activityObj?.lastEvent?.ids,
+      ids: userObj?.lastEvent?.ids,
       context: null,
       who: {
         id: user?.id ?? environment.appName,
@@ -255,41 +241,41 @@ export class ActivityDataObjHelper {
       },
       what: {
         ...initialEventDb?.what,
-        event: activityEvents.delete,
-        databaseName: activityDatabaseName,
+        event: userEvents.delete,
+        databaseName: userDatabaseName,
         operation: eventOperationOptions.delete,
-        dataVersion: activityDataVersion,
+        dataVersion: userDataVersion,
       },
       when: dateHelper.getTimeFromDateTimestamp(new Date()),
     };
 
-    //-- Activity Delete -------------->
-    const activityDelete: ActivityDb = {
-      ...activityObj,
+    //-- User Delete -------------->
+    const userDelete: UserDb = {
+      ...userObj,
       lastEvent,
     };
 
     //-- Delete Fields Before Sending To Server ------------------>
-    activityFieldsToDeleteOnServerSend.forEach((fieldToDelete) => {
+    userFieldsToDeleteOnServerSend.forEach((fieldToDelete) => {
       try {
-        delete activityDelete?.[fieldToDelete];
+        delete userDelete?.[fieldToDelete];
       } catch (error) {
         return;
       }
     });
 
     //-- Event Insert ---------------------------------------------->
-    const eventInsert: EventDb<ActivityLastEventIdentifierFields> = {
-      ...activityObj.lastEvent,
+    const eventInsert: EventDb<UserLastEventIdentifierFields> = {
+      ...userObj.lastEvent,
       what: {
-        ...activityObj.lastEvent.what,
-        obj: { ...activityDelete },
+        ...userObj.lastEvent.what,
+        obj: { ...userDelete },
       },
     };
 
-    //-- State Updates ---------->
-    stateUpdates.activityObj = {
-      ...activityDelete,
+    //-- State Updates ------------------------------->
+    stateUpdates.userObj = {
+      ...userDelete,
     };
 
     return {
@@ -298,7 +284,7 @@ export class ActivityDataObjHelper {
     };
   }
 
-  enrichActivityServerResponse(serverResponse: any) {
+  enrichUserServerResponse(serverResponse: any) {
     if (serverResponse?.docs) {
       return serverResponse.docs.map((doc) => {
         //-- Check to see if 'lastEvent' field exists in order to enrich date fields -->

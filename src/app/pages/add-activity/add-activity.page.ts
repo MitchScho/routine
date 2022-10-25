@@ -6,6 +6,8 @@ import { ActivityService } from 'src/app/services/activity.service';
 import {AngularFireUploadTask, AngularFireStorage,} from '@angular/fire/compat/storage';
 import { FirebaseHelper } from 'src/app/helpers/firebase.helper';
 import { finalize, map } from 'rxjs/operators';
+import { ActivityActions } from 'src/app/actions/activity.action';
+import { ActivityDb } from 'src/app/models/activity.model';
 
 @Component({
   selector: 'app-add-activity',
@@ -15,7 +17,7 @@ import { finalize, map } from 'rxjs/operators';
 export class AddActivityPage implements OnInit {
   formObj: FormGroup;
   task: AngularFireUploadTask;
-  photoUrl: String = null;
+  photoUrl = '';
 
   constructor(
     private fb: FormBuilder,
@@ -24,6 +26,7 @@ export class AddActivityPage implements OnInit {
     private uiHelper: UiHelper,
     private storage: AngularFireStorage,
     private firebaseHelper: FirebaseHelper,
+    private activityActions: ActivityActions,
   ) {}
 
   ngOnInit() {
@@ -38,14 +41,19 @@ export class AddActivityPage implements OnInit {
   }
 
   addActivity() {
-    const activity = {
+    const activity: ActivityDb = {
       name: this.formObj.value.name,
       photoUrl: this.photoUrl
     };
-    this.activityService.addActivity(activity).subscribe((res) => {
-      console.log('activity res', res);
-      this.navCtrl.pop();
-    });
+    this.activityActions.createActivity({ ...activity }).subscribe((res) => {
+      console.log("create activity response", res);
+      this.navCtrl.pop()
+    })
+    
+    // this.activityService.addActivity(activity).subscribe((res) => {
+    //   console.log('activity res', res);
+    //   this.navCtrl.pop();
+    // });
   }
 
   goBack() {

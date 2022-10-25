@@ -1,3 +1,106 @@
+/*************************************************************************************************
+ ** Imports                                                                                      **
+ **************************************************************************************************/
+//-- **Data Models** ----------------------------------------------------------------------------//
+import { EventDb } from '../models/event.model';
+import { initialEventDb } from '../models/event.model';
+//------------------------------------------------------------------------------------------------>
+//--- ***IMPORTANT*** ---------------------------------------------------------------------------->
+//--- Update data version whenever data schema change occurs ------------------------------------->
+//------------------------------------------------------------------------------------------------>
+export const activityDataVersion = 0;
+export const activityDatabaseName = 'activity';
+export const activityEvents = {
+  create: '[Activity]-Create-Activity',
+  update: '[Activity]-Update-Activity',
+  delete: '[Activity]-Delete-Activity',
+};
+
+//-- LastEvent Identifier Fields ------------------>
+export interface ActivityLastEventIdentifierFields {
+  activityId?: string;
+  eventId?: string;
+  eventCorrelationId?: string;
+}
+
+//--- Activity Db Model -------------------------------------------------->
+export interface ActivityDb {
+  id?: string;
+  //--- Main Database Fields --------------------------------------------->
+  name?: string;
+  photoUrl?: string;
+  description?: string;
+  type?: string; //see **activityTypeObj**
+  trackingConfig?: {
+    distance?: boolean;
+    time?: boolean;
+    weight?: boolean;
+  };
+  steps?: {
+    name?: string;
+    description?: string;
+    instructionVideo?: string;
+  }[];
+  
+  //---------------------------------------------------------------------->
+  _display?: any; //-- Local front end display(get deleted on server send)
+  lastEvent?: EventDb<ActivityLastEventIdentifierFields>;
+  createdBy?: {
+    id?: string;
+    name?: string;
+  };
+  createdAt?: {
+    week?: number;
+    month?: number;
+    year?: number;
+    quarter?: number;
+    day?: number;
+    timestamp?: any;
+  };
+}
+
+//--- List of fields to delete when calling server -------->
+export const activityFieldsToDeleteOnServerSend = ['_display'];
+
+export const initialActivityLastEventIdentifierFields = {
+  activityId: null,
+  eventId: null,
+  eventCorrelationId: null,
+};
+
+export const initialActivityLastEvent: EventDb<ActivityLastEventIdentifierFields> =
+{
+  ...initialEventDb,
+  ids: { ...initialActivityLastEventIdentifierFields },
+  what: {
+    ...initialEventDb,
+    databaseName: activityDatabaseName,
+  },
+};
+
+export const initialActivityDb: ActivityDb = {
+  id: null,
+  //--- Main Database Fields --------------------------------------------->
+  name: null,
+  photoUrl: null,
+  //----------------------------------------------------------------------->
+  _display: null, //-- Local front end display(get deleted on server send)
+  lastEvent: { ...initialActivityLastEvent },
+  createdBy: {
+    id: null,
+    name: null,
+  },
+  createdAt: {
+    week: null,
+    month: null,
+    year: null,
+    quarter: null,
+    day: null,
+    timestamp: null,
+  },
+};
+
+
 //**********************************************************************************************/
 //****** Activity Activity/Database (activity.model.ts) *****************************************/
 //**********************************************************************************************/
@@ -92,103 +195,3 @@
 //   activityTypeObj.mental,
 //   activityTypeObj.intellectual,
 // ];
-/*************************************************************************************************
- ** Imports                                                                                      **
- **************************************************************************************************/
-//-- **Data Models** ----------------------------------------------------------------------------//
-import { EventDb } from '../models/event.model';
-import { initialEventDb } from '../models/event.model';
-//------------------------------------------------------------------------------------------------>
-//--- ***IMPORTANT*** ---------------------------------------------------------------------------->
-//--- Update data version whenever data schema change occurs ------------------------------------->
-//------------------------------------------------------------------------------------------------>
-export const activityDataVersion = 0;
-export const activityDatabaseName = 'activity';
-export const activityEvents = {
-  create: '[Activity]-Create-Activity',
-  update: '[Activity]-Update-Activity',
-  delete: '[Activity]-Delete-Activity',
-};
-
-//-- LastEvent Identifier Fields ------------------>
-export interface ActivityLastEventIdentifierFields {
-  activityId?: string;
-  eventId?: string;
-  eventCorrelationId?: string;
-}
-
-//--- Activity Db Model -------------------------------------------------->
-export interface ActivityDb {
-  id?: string;
-  //--- Main Database Fields --------------------------------------------->
-  name: string;
-  description: string;
-  type: string; //see **activityTypeObj**
-  trackingConfig: {
-    distance: boolean;
-    time: boolean;
-    weight: boolean;
-  };
-  steps: {
-    name: string;
-    description?: string;
-    instructionVideo?: string;
-  }[];
-
-  //---------------------------------------------------------------------->
-  _display?: any; //-- Local front end display(get deleted on server send)
-  lastEvent?: EventDb<ActivityLastEventIdentifierFields>;
-  createdBy?: {
-    id?: string;
-    name?: string;
-  };
-  createdAt?: {
-    week?: number;
-    month?: number;
-    year?: number;
-    quarter?: number;
-    day?: number;
-    timestamp?: any;
-  };
-}
-
-//--- List of fields to delete when calling server -------->
-export const activityFieldsToDeleteOnServerSend = ['_display'];
-
-export const initialActivityLastEventIdentifierFields = {
-  activityId: null,
-  eventId: null,
-  eventCorrelationId: null,
-};
-
-export const initialActivityLastEvent: EventDb<ActivityLastEventIdentifierFields> =
-  {
-    ...initialEventDb,
-    ids: { ...initialActivityLastEventIdentifierFields },
-    what: {
-      ...initialEventDb,
-      databaseName: activityDatabaseName,
-    },
-  };
-
-export const initialActivityDb = {
-  id: null,
-  //--- Main Database Fields --------------------------------------------->
-  name: null,
-  //----------------------------------------------------------------------->
-  _display: null, //-- Local front end display(get deleted on server send)
-  lastEvent: { ...initialActivityLastEvent },
-  createdBy: {
-    id: null,
-    name: null,
-  },
-  createdAt: {
-    week: null,
-    month: null,
-    year: null,
-    quarter: null,
-    day: null,
-    timestamp: null,
-  },
-};
-

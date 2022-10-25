@@ -100,7 +100,7 @@ export interface UserDb {
   lastName?: string;
   name?: string;
   password?: string;
-  photoUrl: string;
+  photoUrl?: string;
 
   //---------------------------------------------------------------------->
   _display?: any; //-- Local front end display(get deleted on server send)
@@ -137,10 +137,11 @@ export const initialUserLastEvent: EventDb<UserLastEventIdentifierFields> = {
   },
 };
 
-export const initialUserDb = {
+export const initialUserDb: UserDb = {
   id: null,
   //--- Main Database Fields --------------------------------------------->
   name: null,
+  photoUrl: null,
   //----------------------------------------------------------------------->
   _display: null, //-- Local front end display(get deleted on server send)
   lastEvent: { ...initialUserLastEvent },

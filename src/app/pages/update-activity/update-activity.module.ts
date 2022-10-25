@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
@@ -13,8 +14,10 @@ import { UpdateActivityPage } from './update-activity.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    UpdateActivityPageRoutingModule
+    UpdateActivityPageRoutingModule,
+    ReactiveFormsModule,
+
   ],
-  declarations: [UpdateActivityPage]
+  declarations: [UpdateActivityPage],
 })
 export class UpdateActivityPageModule {}

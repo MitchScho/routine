@@ -43,7 +43,7 @@ export class LoginPage implements OnInit {
       console.log("login res", res);
       const user = res
       console.log("login user", user);
-      this.navCtrl.navigateForward('dog-dashboard');
+      this.navCtrl.navigateForward('activity-dashboard');
   })
 }
 

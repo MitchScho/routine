@@ -20,16 +20,16 @@ const routes: Routes = [
     loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
   },
   {
-    path: 'dog-dashboard',
-    loadChildren: () => import('./pages/activity-dashboard/activity-dashboard.module').then( m => m.DogDashboardPageModule)
+    path: 'activity-dashboard',
+    loadChildren: () => import('./pages/activity-dashboard/activity-dashboard.module').then( m => m.ActivityDashboardPageModule)
   },
   {
-    path: 'add-dog',
-    loadChildren: () => import('./pages/add-activity/add-activity.module').then( m => m.AddDogPageModule)
+    path: 'add-activity',
+    loadChildren: () => import('./pages/add-activity/add-activity.module').then( m => m.AddActivityPageModule)
   },
   {
-    path: 'update-dog',
-    loadChildren: () => import('./pages/update-activity/update-activity.module').then( m => m.UpdateDogPageModule)
+    path: 'update-activity',
+    loadChildren: () => import('./pages/update-activity/update-activity.module').then( m => m.UpdateActivityPageModule)
   },
 ];
 
