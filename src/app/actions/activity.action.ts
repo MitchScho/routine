@@ -30,7 +30,7 @@ export class ActivityActions {
       tap(() => {
         this.uiHelper.showLoader('Loading...');
       }),
-      withLatestFrom(this.activityState.getActivityListObs()),
+      withLatestFrom(this.activityState.getActivityList()),
       switchMap(([activityObj, oldActivityList]) => {
         const dataObj = this.activityDataObjHelper.createActivity(
           activityObj,
@@ -44,7 +44,7 @@ export class ActivityActions {
           .pipe(
             take(1),
             switchMap((res) => {
-              this.activityState.setActivityListObs(stateUpdates.activityList);
+              this.activityState.setActivityList(stateUpdates.activityList);
               // this.navctrl.pop
               return of();
             }),
@@ -79,7 +79,7 @@ export class ActivityActions {
 
             console.log('enrichedActivities', enrichedActivities);
             //-- Set new ActivityList state Variables ----------->
-            this.activityState.setActivityListObs(enrichedActivities);
+            this.activityState.setActivityList(enrichedActivities);
             this.uiHelper.hideLoader();
             return of();
           }),
@@ -103,8 +103,8 @@ export class ActivityActions {
         this.uiHelper.showLoader('Loading...');
       }),
       withLatestFrom(
-        this.activityState.getActivityItemObs(),
-        this.activityState.getActivityListObs()
+        this.activityState.getActivity(),
+        this.activityState.getActivityList()
       ),
       switchMap(([activityObj, originalActivityObj, oldActivityList]) => {
         const dataObj = this.activityDataObjHelper.updateActivity(
@@ -120,8 +120,8 @@ export class ActivityActions {
           .pipe(
             take(1),
             switchMap((res) => {
-              this.activityState.setActivityItem(stateUpdates.activityObj);
-              this.activityState.setActivityListObs(stateUpdates.activityList);
+              this.activityState.setActivity(stateUpdates.activityObj);
+              this.activityState.setActivityList(stateUpdates.activityList);
               return of();
             }),
             //-- Catch Error -------------------------------->

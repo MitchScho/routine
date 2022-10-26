@@ -52,12 +52,12 @@ export class ActivityState {
   //   return this.activityItem$.getValue();
   // }
 
-  setActivity(activity: ActivityDb) {
-    this.activity$.next(activity);
+  setActivity(activity: ActivityDb): void {
+    this.activity$.next({...activity});
   }
 
   setActivityList(activityList: ActivityDb[]) {
-    this.activityList$.next([activityList]);
+    this.activityList$.next([...activityList]);
   }
 
   //-- Get Last emitted Value of observable --------------------->
