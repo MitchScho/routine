@@ -1,27 +1,45 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title style="text-align: center;">Update Activity</ion-title>
     <ion-buttons slot="start">
-      <ion-button (click)="goBack()" size="large">
+      <ion-button (click)="goBack()"
+                  size="large">
         <ion-icon name="arrow-back-circle"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title style="text-align: center;">UpDateActivity</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="deleteActivity()"
+                  size="large">
+        <ion-icon name="trash-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <form class="formContainer" [formGroup]="formObj">
+  <form class="formContainer"
+        [formGroup]="formObj">
     <ion-grid>
       <ion-row style="display: flex; justify-content: center;">
         <!-- <ion-button> -->
         <!-- <ion-fab-button> -->
-        <ion-avatar *ngIf="!photoUrl" class="avatar" (click)="fileInput.click()">
-          <img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/demos/api/avatar/avatar.svg" />
+        <ion-avatar *ngIf="!photoUrl"
+                    class="avatar"
+                    (click)="fileInput.click()">
+          <img alt="Silhouette of a person's head"
+               src="https://ionicframework.com/docs/demos/api/avatar/avatar.svg" />
         </ion-avatar>
-        <ion-avatar *ngIf="photoUrl" class="avatar" (click)="fileInput.click()">
-          <img alt="Silhouette of a person's head" [src]="photoUrl" />
+        <ion-avatar *ngIf="photoUrl"
+                    class="avatar"
+                    (click)="fileInput.click()">
+          <img alt="Silhouette of a person's head"
+               [src]="photoUrl" />
         </ion-avatar>
-        <input hidden type="file" #fileInput multiple (change)="uploadFiles($event.target)">
+        <input hidden
+               type="file"
+               #fileInput
+               multiple
+               (change)="uploadFiles($event.target)">
         <!-- <ion-icon name="camera"></ion-icon> -->
         <!-- </ion-fab-button> -->
         <!-- </ion-button> -->
@@ -40,4 +58,3 @@
     </ion-grid>
   </form>
 </ion-content>
-

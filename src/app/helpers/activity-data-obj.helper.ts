@@ -123,12 +123,11 @@ export class ActivityDataObjHelper {
   updateActivity(
     activity: ActivityDb,
     originalActivityObj: ActivityDb,
-    oldActivityList: ActivityDb[],
     user?: UserDb
   ) {
-    let stateUpdates: { activityObj: ActivityDb, activityList: ActivityDb[] } = {
+    let stateUpdates: { activityObj: ActivityDb } = {
       activityObj: initialActivityDb,
-      activityList: [],
+      // activityList: [],
     };
 
     //-- Identifier Fields --------------------------------------------------->
@@ -138,6 +137,7 @@ export class ActivityDataObjHelper {
     //--- Activity Obj -------------------------->
     const activityObj: ActivityDb = {
       ...initialActivityDb,
+      ...originalActivityObj,
       ...activity,
       lastEvent: {
         ...activity?.lastEvent,
@@ -196,19 +196,19 @@ export class ActivityDataObjHelper {
     };
 
     
-    const updatedActivityList = oldActivityList.map((item) => {
-      if (item.id == activityUpdate.id) {
-        return { ...activityUpdate };
-      } else {
-        return {...item}
-      }
-    })
+    // const updatedActivityList = oldActivityList.map((item) => {
+    //   if (item.id == activityUpdate.id) {
+    //     return { ...activityUpdate };
+    //   } else {
+    //     return {...item}
+    //   }
+    // })
 
     //-- State Updates ---------->
     stateUpdates = {
       ...stateUpdates,
       activityObj: {...activityUpdate},
-      activityList: [...updatedActivityList]
+      // activityList: [...updatedActivityList]
   
     };
 
@@ -295,6 +295,7 @@ export class ActivityDataObjHelper {
     return {
       eventInsert,
       stateUpdates,
+      activityDelete
     };
   }
 

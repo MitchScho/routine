@@ -13,6 +13,7 @@ import { ActivityDataObjHelper } from './../helpers/activity-data-obj.helper';
 import { UiHelper } from '../helpers/ui.helper';
 import { ActivityState } from '../state/activity.state';
 import { ActivityService } from '../services/activity.service';
+import { NavController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root',
@@ -22,20 +23,21 @@ export class ActivityActions {
     private activityService: ActivityService,
     private activityState: ActivityState,
     private activityDataObjHelper: ActivityDataObjHelper,
-    private uiHelper: UiHelper
+    private uiHelper: UiHelper,
+    private navController: NavController
   ) {}
 
-  createActivity(activityObj: ActivityDb) {
+  createActivity(
+    activityObj: ActivityDb,
+    navigationRoute?: string,
+    navDirection?: 'back' | 'forward'
+  ) {
     return of(activityObj).pipe(
       tap(() => {
         this.uiHelper.showLoader('Loading...');
       }),
-      withLatestFrom(this.activityState.getActivityList()),
-      switchMap(([activityObj, oldActivityList]) => {
-        const dataObj = this.activityDataObjHelper.createActivity(
-          activityObj,
-          oldActivityList
-        );
+      switchMap((activityObj) => {
+        const dataObj = this.activityDataObjHelper.createActivity(activityObj);
         const activityInsert = dataObj.activityInsert;
         const eventInsert = dataObj.eventInsert;
         const stateUpdates = dataObj.stateUpdates;
@@ -44,8 +46,20 @@ export class ActivityActions {
           .pipe(
             take(1),
             switchMap((res) => {
-              this.activityState.setActivityList(stateUpdates.activityList);
-              // this.navctrl.pop
+              this.activityState.addItemToList(stateUpdates.activityObj);
+              this.uiHelper.hideLoader();
+              this.uiHelper.displayToast(
+                'Activity Added Successfully!',
+                2000,
+                'bottom'
+              );
+              if (navigationRoute && navDirection) {
+                if (navDirection == 'back') {
+                  this.navController.navigateBack(navigationRoute);
+                } else {
+                  this.navController.navigateForward(navigationRoute);
+                }
+              }
               return of();
             }),
             //-- Catch Error -------------------------------->
@@ -97,20 +111,26 @@ export class ActivityActions {
     );
   }
 
-  updateActivity(activityObj: ActivityDb) {
+  updateActivity(
+    activityObj: ActivityDb,
+    navigationRoute?: string,
+    navDirection?: 'back' | 'forward'
+  ) {
     return of(activityObj).pipe(
       tap(() => {
         this.uiHelper.showLoader('Loading...');
       }),
-      withLatestFrom(
-        this.activityState.getActivity(),
-        this.activityState.getActivityList()
-      ),
-      switchMap(([activityObj, originalActivityObj, oldActivityList]) => {
+      withLatestFrom(this.activityState.getActivity$()),
+      switchMap(([activityObj, originalActivityObj]) => {
         const dataObj = this.activityDataObjHelper.updateActivity(
           activityObj,
-          originalActivityObj,
-          oldActivityList
+          originalActivityObj
+        );
+        this.uiHelper.hideLoader();
+        this.uiHelper.displayToast(
+          'Activity Updated Successfully!',
+          2000,
+          'bottom'
         );
         const activityUpdate = dataObj.activityUpdate;
         const eventInsert = dataObj.eventInsert;
@@ -121,7 +141,14 @@ export class ActivityActions {
             take(1),
             switchMap((res) => {
               this.activityState.setActivity(stateUpdates.activityObj);
-              this.activityState.setActivityList(stateUpdates.activityList);
+              this.activityState.updateItemInList(stateUpdates.activityObj);
+              if (navigationRoute && navDirection) {
+                if (navDirection == 'back') {
+                  this.navController.navigateBack(navigationRoute);
+                } else {
+                  this.navController.navigateForward(navigationRoute);
+                }
+              }
               return of();
             }),
             //-- Catch Error -------------------------------->
@@ -137,4 +164,55 @@ export class ActivityActions {
       })
     );
   }
+
+  deleteActivity(
+    activityObj: ActivityDb,
+    navigationRoute?: string,
+    navDirection?: 'back' | 'forward'
+  ) {
+    return of(activityObj).pipe(
+      tap(() => {
+        this.uiHelper.showLoader('Loading...');
+      }),
+      switchMap((activityObj) => {
+        console.log("activity Obj", activityObj);
+        const dataObj = this.activityDataObjHelper.deleteActivity(activityObj);
+        console.log("data object", dataObj);
+        const eventInsert = dataObj.eventInsert;
+        const stateUpdates = dataObj.stateUpdates;
+        return this.activityService.deleteActivity(activityObj.id, eventInsert)
+          .pipe(
+            take(1),
+            switchMap((res) => {
+              this.activityState.removeItemInList(stateUpdates.activityObj);
+              this.uiHelper.hideLoader();
+              this.uiHelper.displayToast(
+                'Activity Removed Successfully!',
+                2000,
+                'bottom'
+              );
+              if (navigationRoute && navDirection) {
+                console.log("looking for navigation")
+                if (navDirection == 'back') {
+                  this.navController.navigateBack(navigationRoute);
+                } else {
+                  this.navController.navigateForward(navigationRoute);
+                }
+              }
+              return of();
+            }),
+            //-- Catch Error -------------------------------->
+            catchError((error) => {
+              console.log('error in Delete Activity', error);
+              this.uiHelper.hideLoader();
+              this.uiHelper.displayErrorAlert(error.message);
+
+              // return this.errorActions.createError(error, insertIntoErrorDbFlag: true)
+              return of();
+            })
+          );
+      })
+    );
+  }
+
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivityDb, initialActivityDb } from 'src/app/models/activity.model';
 import { ActivityState } from 'src/app/state/activity.state';
 import {
@@ -6,22 +6,24 @@ import {
   AngularFireStorage,
 } from '@angular/fire/compat/storage';
 import { FirebaseHelper } from 'src/app/helpers/firebase.helper';
-import { finalize, map } from 'rxjs/operators';
+import { finalize, map, take, takeUntil } from 'rxjs/operators';
 import { NavController } from '@ionic/angular';
 import { UiHelper } from 'src/app/helpers/ui.helper';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivityActions } from 'src/app/actions/activity.action';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-update-activity',
   templateUrl: './update-activity.page.html',
   styleUrls: ['./update-activity.page.scss'],
 })
-export class UpdateActivityPage implements OnInit {
+export class UpdateActivityPage implements OnInit, OnDestroy {
   activity: ActivityDb = { ...initialActivityDb };
   formObj: FormGroup;
   // task: AngularFireUploadTask;
   photoUrl: string = null;
+  private destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     private activityState: ActivityState,
@@ -35,11 +37,11 @@ export class UpdateActivityPage implements OnInit {
 
   ngOnInit() {
     console.log('activity', this.activity);
-    this.activityState.getActivityItemObs().subscribe((activityItem) => {
+    this.activityState.getActivity$().pipe(takeUntil(this.destroy$)).subscribe((activityItem) => {
       this.activity = { ...activityItem };
+      this.photoUrl = this.activity?.photoUrl;
+      console.log('activity', this.activity);
     });
-    this.photoUrl = this.activity?.photoUrl;
-    console.log('activity', this.activity);
     this.initForm();
   }
 
@@ -55,9 +57,17 @@ export class UpdateActivityPage implements OnInit {
       name: this.formObj.value.name,
       photoUrl: this.photoUrl,
     };
-    this.activityActions.updateActivity(activity).subscribe((res) => {
-      console.log('activity res', res);
-      this.navCtrl.pop();
+    this.activityActions.updateActivity(activity, 'activity-dashboard', 'back').pipe(take(1)).subscribe();
+    
+    
+  }
+
+  deleteActivity(): void{
+    const activity = {
+      ...this.activity 
+    }
+    this.activityActions.deleteActivity(activity, 'activity-dashboard', 'back').pipe(take(1)).subscribe((res) => {
+      console.log("response", res);
     });
   }
 
@@ -101,4 +111,17 @@ export class UpdateActivityPage implements OnInit {
       this.uiHelper.displayErrorAlert('Incorrect File Type....');
     }
   }
+
+  /**
+   * @method ngOnDestroy
+   * @description Angular page life cycle method that runs when page is being destroyed
+   *                            - Generally used to clean up any subscribed streams/observables to prevent data leaks
+   * @return void
+   */
+  ngOnDestroy(): void {
+    // console.log('Destroyed Create Feature Page');
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
+
 }

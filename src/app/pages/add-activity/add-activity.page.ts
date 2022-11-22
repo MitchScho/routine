@@ -5,7 +5,7 @@ import { UiHelper } from 'src/app/helpers/ui.helper';
 import { ActivityService } from 'src/app/services/activity.service';
 import {AngularFireUploadTask, AngularFireStorage,} from '@angular/fire/compat/storage';
 import { FirebaseHelper } from 'src/app/helpers/firebase.helper';
-import { finalize, map } from 'rxjs/operators';
+import { finalize, map, take } from 'rxjs/operators';
 import { ActivityActions } from 'src/app/actions/activity.action';
 import { ActivityDb } from 'src/app/models/activity.model';
 
@@ -45,11 +45,9 @@ export class AddActivityPage implements OnInit {
       name: this.formObj.value.name,
       photoUrl: this.photoUrl
     };
-    this.activityActions.createActivity({ ...activity }).subscribe((res) => {
-      console.log("create activity response", res);
-      this.navCtrl.pop()
-    })
+    this.activityActions.createActivity(activity, 'activity-dashboard', 'back').pipe(take(1)).subscribe();
     
+  
     // this.activityService.addActivity(activity).subscribe((res) => {
     //   console.log('activity res', res);
     //   this.navCtrl.pop();
